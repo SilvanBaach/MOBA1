@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="center">
+        <div id="arrow">&#8593;</div>
+    </div>
+    <br>
+    <br>
+    <br>
+
+    <div style="text-align: center">
+        <button onclick="getPermissions()">Get Permissions</button>
+        <h1 id="information" style="color:red;"></h1>
+    </div>
+
+</body>
+
+<script>
+
+    let arrow = document.getElementById("arrow")
+
+    function getPermissions(){
+        arrow.style.transform = ""
+        // feature detect
+        if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+            DeviceOrientationEvent.requestPermission()
+                .then(permissionState => {
+                    if (permissionState === 'granted') {
+                        window.addEventListener("deviceorientation", handleOrientation, true);
+                        writeInfo("Permissions granted!", "Orange")
+                    }
+                })
+                .catch(error => writeInfo("No access for device orientation, " + error, "red"));
+        } else {
+            // handle regular non iOS 13+ devices
+            window.addEventListener("deviceorientation", handleOrientation, true);
+            writeInfo("Permissions granted!", "Orange")
+        }
+    }
+
+
+
+    function handleOrientation(e) {
+        let a = Math.floor(e.alpha)
+        let b = Math.floor(e.beta)
+        let c = Math.floor(e.gamma)
+        let rotation = "rotateZ("+a+"deg) rotateX("+b+"deg) rotateY("+c+"deg)"
+        let subRotation = "rotateZ("+a+"deg)"
+        arrow.style.transform = subRotation
+        writeInfo(rotation, "blue")
+    }
+
+    function writeInfo(text,color){
+        let info = document.getElementById("information")
+        info.innerHTML = text
+        info.style.color = color
+    }
+
+</script>
+
+</html>
